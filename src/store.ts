@@ -1,0 +1,72 @@
+// store.js
+
+import { create } from "zustand";
+import {
+  addEdge,
+  applyNodeChanges,
+  applyEdgeChanges,
+  MarkerType,
+  Node,
+  Edge,
+  NodeChange,
+  EdgeChange,
+  Connection,
+} from "reactflow";
+import { v4 as uuid } from "uuid";
+
+export interface Store {
+  nodes: Node[];
+  edges: Edge[];
+  getNodeID: (type: string) => string;
+  addNode: (node: Node) => void;
+  onNodesChange: (changes: NodeChange[]) => void;
+  onEdgesChange: (changes: EdgeChange[]) => void;
+  onConnect: (connection: Connection) => void;
+  updateNodeField: (nodeId: string, fieldName: string, fieldValue: string) => void;
+}
+
+export const useStore = create<Store>()((set, get) => ({
+  nodes: [],
+  edges: [],
+  getNodeID: () => {
+    return uuid();
+  },
+  addNode: (node) => {
+    set({
+      nodes: [...get().nodes, node],
+    });
+  },
+  onNodesChange: (changes) => {
+    set({
+      nodes: applyNodeChanges(changes, get().nodes),
+    });
+  },
+  onEdgesChange: (changes) => {
+    set({
+      edges: applyEdgeChanges(changes, get().edges),
+    });
+  },
+  onConnect: (connection) => {
+    set({
+      edges: addEdge(
+        {
+          ...connection,
+          type: "smoothstep",
+          animated: true,
+          markerEnd: { type: MarkerType.Arrow, height: 20, width: 20 },
+        },
+        get().edges
+      ),
+    });
+  },
+  updateNodeField: (nodeId, fieldName, fieldValue) => {
+    set({
+      nodes: get().nodes.map((node) => {
+        if (node.id === nodeId) {
+          node.data = { ...node.data, [fieldName]: fieldValue };
+        }
+        return node;
+      }),
+    });
+  },
+}));
