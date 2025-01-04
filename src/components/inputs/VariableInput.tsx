@@ -1,53 +1,51 @@
 import { useEffect, useState } from "react";
-import { VariableInputData } from "../../constants/nodes";
-import { Handle, Position, useUpdateNodeInternals } from "reactflow";
+import { NodeHandler, VariableInputData } from "../../constants/nodes";
+import { Position } from "reactflow";
 import { AutoHeightTextArea } from "../AutoHeightTextArea";
+import { useDebounce } from "../hooks/useDebounce";
+import { Handler } from "../Handler";
 
 interface IProps {
   data: VariableInputData;
-  parentId: string;
 }
 
 const regex = /\{\{(\w+)\}\}/g;
 
-export const VariableInput = ({ data, parentId }: IProps) => {
+export const VariableInput = ({ data }: IProps) => {
   // consts
-  const { input, type, value } = data;
+  const { input, value } = data;
 
   // states
-  const [variableHandlers, setVariableHandlers] = useState<string[]>([]);
-  const [steps, setSteps] = useState<number[]>([]);
+  const [val, setVal] = useState("");
+  const [handlers, setHandlers] = useState<NodeHandler[]>([]);
 
   // hooks
-  const updateNodeInternals = useUpdateNodeInternals();
+  const debouncedVal = useDebounce(val, 200);
 
   // handlers
   function handleOnChange(val: string) {
-    setVariableHandlers([...val.matchAll(regex)].map((n) => n[1]));
+    setVal(val);
   }
 
-  function handleGenerateHandlerPositions() {
-    const handlers = variableHandlers.length;
-    const res: number[] = [];
-    const step = 100 / (handlers + 1);
-    let interval = step;
+  function handleVariableHandlers() {
+    const variables = [...val.matchAll(regex)].map((n) => n[1]);
+    const tmp: NodeHandler[] = [];
 
-    for (let i = 1; i <= handlers; i++) {
-      res.push(interval);
-      interval += step;
+    for (const v of variables) {
+      tmp.push({
+        name: v,
+        position: Position.Left,
+        type: "target",
+      });
     }
 
-    return res;
+    setHandlers(tmp);
   }
 
   // effect
   useEffect(() => {
-    setSteps(handleGenerateHandlerPositions() ?? []);
-  }, [variableHandlers.length]);
-
-  useEffect(() => {
-    updateNodeInternals(parentId);
-  }, [steps]);
+    handleVariableHandlers();
+  }, [debouncedVal]);
 
   return (
     <div>
@@ -57,17 +55,7 @@ export const VariableInput = ({ data, parentId }: IProps) => {
         value={value}
         onChange={handleOnChange}
       />
-      {variableHandlers.map((v, i) => (
-        <Handle
-          key={v + i}
-          id={v + parentId}
-          position={Position.Left}
-          type="target"
-          style={{
-            top: steps[i] + "%",
-          }}
-        />
-      ))}
+      <Handler handlers={handlers} />
     </div>
   );
 };

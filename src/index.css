@@ -7,7 +7,7 @@
 }
 
 :root {
-  --primary-color: rgba(124, 121, 210, 1);
+  --primary-color: rgb(124, 121, 210);
   --sec-color: rgba(95, 91, 201, 1);
 }
 

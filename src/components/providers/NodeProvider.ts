@@ -2,6 +2,7 @@ import { createContext, useContext } from "react";
 
 type NodeCtxType = {
   parentId: string;
+  zoom: number
 };
 
 export const NodeCtx = createContext<NodeCtxType | null>(null);

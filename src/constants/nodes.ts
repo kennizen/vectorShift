@@ -1,6 +1,6 @@
 import { HandleProps, Node, Position } from "reactflow";
 
-export type CustomNodeTypes = "input" | "output" | "llm" | "text";
+export type CustomNodeTypes = "input" | "output" | "llm" | "text" | "llm2";
 
 export type NodeHandler = {
   type: HandleProps["type"];
@@ -147,7 +147,7 @@ export const NODE_DATA: Record<CustomNodeTypes, NodeData> = {
   },
   text: {
     type: "text",
-    name: "Text Node",
+    name: "Text",
     inputs: [
       {
         type: "variable",
@@ -155,6 +155,57 @@ export const NODE_DATA: Record<CustomNodeTypes, NodeData> = {
           label: "Text node",
         },
         value: "",
+      },
+    ],
+  },
+  llm2: {
+    type: "llm2",
+    name: "LLM2",
+    inputs: [
+      {
+        type: "actionable",
+        value: "",
+        ctas: ["Edit Selected", "Create New"],
+        input: {
+          label: "llm2",
+          options: [
+            {
+              optionName: "email",
+              handlers: [
+                {
+                  name: "h1",
+                  position: Position.Left,
+                  type: "target",
+                },
+                {
+                  name: "h2",
+                  position: Position.Left,
+                  type: "target",
+                },
+                {
+                  name: "h3",
+                  position: Position.Left,
+                  type: "target",
+                },
+              ],
+            },
+            {
+              optionName: "slack",
+              handlers: [
+                {
+                  name: "h1",
+                  position: Position.Left,
+                  type: "target",
+                },
+                {
+                  name: "h2",
+                  position: Position.Left,
+                  type: "target",
+                },
+              ],
+            },
+          ],
+        },
       },
     ],
   },
