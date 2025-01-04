@@ -1,14 +1,15 @@
 import { DragEvent } from "react";
+import { CustomNodeTypes } from "../constants/nodes";
 
 interface IProps {
-  type: string;
   label: string;
+  type: CustomNodeTypes;
 }
 
-export const DraggableNode = ({ label, type }: IProps) => {
+export const DraggableNode = ({ type, label }: IProps) => {
   const onDragStart = (event: DragEvent<HTMLDivElement>, nodeType: string) => {
     const target = event.target as HTMLDivElement;
-    const appData = { nodeType };
+    const appData = { rfNodeType: "node", nodeType: nodeType };
 
     target.style.cursor = "grabbing";
 

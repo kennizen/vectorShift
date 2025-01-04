@@ -6,19 +6,19 @@ import {
   applyNodeChanges,
   applyEdgeChanges,
   MarkerType,
-  Node,
   Edge,
   NodeChange,
   EdgeChange,
   Connection,
 } from "reactflow";
 import { v4 as uuid } from "uuid";
+import { CustomNode } from "./constants/nodes";
 
 export interface Store {
-  nodes: Node[];
+  nodes: CustomNode[];
   edges: Edge[];
   getNodeID: (type: string) => string;
-  addNode: (node: Node) => void;
+  addNode: (node: CustomNode) => void;
   onNodesChange: (changes: NodeChange[]) => void;
   onEdgesChange: (changes: EdgeChange[]) => void;
   onConnect: (connection: Connection) => void;
@@ -47,6 +47,8 @@ export const useStore = create<Store>()((set, get) => ({
     });
   },
   onConnect: (connection) => {
+    console.log("on connect", connection);
+
     set({
       edges: addEdge(
         {

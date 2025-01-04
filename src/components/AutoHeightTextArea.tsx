@@ -1,3 +1,4 @@
+import { TextareaAutosize } from "@mui/material";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 
 interface IProps {
@@ -34,18 +35,21 @@ export const AutoHeightTextArea = ({ id, name, value, onChange }: IProps) => {
   }, []);
 
   return (
-    <textarea
-      ref={textAreaRef}
-      id={id}
-      name={name}
-      style={{
-        padding: "0.5rem 0.5rem 0 0.5rem",
-        resize: "none",
-        overflow: "hidden",
-        height: "38px",
-      }}
-      value={val}
-      onChange={handleOnChange}
-    />
+    <>
+      <textarea
+        ref={textAreaRef}
+        id={id}
+        name={name}
+        style={{
+          padding: "0.5rem",
+          resize: "none",
+          overflow: "hidden",
+          height: "46px",
+        }}
+        value={val}
+        onChange={handleOnChange}
+      />
+      <TextareaAutosize />
+    </>
   );
 };

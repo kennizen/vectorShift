@@ -8,6 +8,7 @@ import { useStore, Store } from "../store";
 import { shallow } from "zustand/shallow";
 
 import { Node } from "./Node";
+import { NodeData, CustomNodeTypes, NODE_DATA, CustomNode } from "../constants/nodes";
 import "reactflow/dist/style.css";
 
 const gridSize = 20;
@@ -26,15 +27,14 @@ const selector = (state: Store) => ({
   onConnect: state.onConnect,
 });
 
+function getInitNodeData(type: CustomNodeTypes): NodeData {
+  return NODE_DATA[type];
+}
+
 export const PipelineUI = () => {
   const reactFlowWrapper = useRef<HTMLDivElement | null>(null);
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
   const { nodes, edges, getNodeID, addNode, onNodesChange, onEdgesChange, onConnect } = useStore(selector, shallow);
-
-  const getInitNodeData = (nodeID: string, type: string) => {
-    let nodeData = { id: nodeID, nodeType: `${type}` };
-    return nodeData;
-  };
 
   const handleSetReactFlowIns = (ins: ReactFlowInstance) => {
     setReactFlowInstance(ins);
@@ -50,6 +50,7 @@ export const PipelineUI = () => {
       if (event?.dataTransfer?.getData("application/reactflow")) {
         const appData = JSON.parse(event.dataTransfer.getData("application/reactflow"));
         const type = appData?.nodeType;
+        const rfType = appData?.rfNodeType;
 
         // check if the dropped element is valid
         if (typeof type === "undefined" || !type) {
@@ -62,11 +63,11 @@ export const PipelineUI = () => {
         });
 
         const nodeID = getNodeID(type);
-        const newNode = {
+        const newNode: CustomNode = {
           id: nodeID,
-          type,
+          type: rfType,
           position,
-          data: getInitNodeData(nodeID, type),
+          data: getInitNodeData(type),
         };
 
         addNode(newNode);
@@ -80,7 +81,7 @@ export const PipelineUI = () => {
     event.dataTransfer.dropEffect = "move";
   }, []);
 
-  console.log({ nodes });
+  console.log({ nodes, edges });
 
   return (
     <>
