@@ -72,7 +72,9 @@ export const Node = (props: NodeProps) => {
           zoom: z,
         }}
       >
-        <div className="nodrag">{handleGetInputs()}</div>
+        <Stack className="nodrag" gap="1rem">
+          {handleGetInputs()}
+        </Stack>
       </NodeCtx.Provider>
     </Stack>
   );

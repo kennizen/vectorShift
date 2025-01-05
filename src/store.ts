@@ -11,7 +11,6 @@ import {
   EdgeChange,
   Connection,
 } from "reactflow";
-import { v4 as uuid } from "uuid";
 import { CustomNode } from "./constants/nodes";
 
 export interface Store {
@@ -29,7 +28,7 @@ export const useStore = create<Store>()((set, get) => ({
   nodes: [],
   edges: [],
   getNodeID: () => {
-    return uuid();
+    return get().nodes.length + 1 + "";
   },
   addNode: (node) => {
     set({
