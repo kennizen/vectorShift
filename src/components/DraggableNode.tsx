@@ -36,6 +36,7 @@ export const DraggableNode = ({ type, label }: IProps) => {
         backgroundColor: "#1C2536",
         justifyContent: "center",
         flexDirection: "column",
+        padding: "0.5rem"
       }}
       draggable
     >

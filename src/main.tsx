@@ -1,13 +1,12 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "./index.css";
+import { ToastContainer } from "react-toastify";
 import App from "./App.tsx";
-import { ReactFlowProvider } from "reactflow";
+import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ReactFlowProvider>
-      <App />
-    </ReactFlowProvider>
+    <App />
+    <ToastContainer position="bottom-center"/>
   </StrictMode>
 );

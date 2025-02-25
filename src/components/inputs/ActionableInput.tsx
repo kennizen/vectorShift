@@ -1,29 +1,30 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ActionableInputData, NodeHandler } from "../../constants/nodes";
-import { Handle, Position, useUpdateNodeInternals } from "reactflow";
+import { FormControl, InputLabel, MenuItem, Stack } from "@mui/material";
+import { StyledSelect } from "../ui/styledComponents/StyledSelect";
+import { Handler } from "../Handler";
+import { StyledButton } from "../ui/styledComponents/StyledButton";
+import { useNodeCtx } from "../providers/NodeProvider";
 
 interface IProps {
   data: ActionableInputData;
-  parentId: string;
 }
 
 type OptionsMap = Record<string, NodeHandler[]>;
 
-export const ActionableInput = ({ data, parentId }: IProps) => {
+export const ActionableInput = ({ data }: IProps) => {
   // consts
   const { ctas, input, value } = data;
 
   // states
   const [selOption, setSelOption] = useState(value);
   const [options, setOptions] = useState<OptionsMap>({});
-  const [srcSteps, setSrcSteps] = useState<number[]>([]);
-  const [tarSteps, setTarSteps] = useState<number[]>([]);
 
   // hooks
-  const updateNodeInternals = useUpdateNodeInternals();
+  const { zoom } = useNodeCtx();
 
   // handlers
-  function handleOnOptionSelect(e: ChangeEvent<HTMLSelectElement>) {
+  function handleOnOptionSelect(e: any) {
     setSelOption(e.target.value);
   }
 
@@ -37,87 +38,31 @@ export const ActionableInput = ({ data, parentId }: IProps) => {
     setOptions(tmp);
   }
 
-  function handleGenerateHandlerPositions(h: number) {
-    const hndlrs = h;
-    const res: number[] = [];
-    const step = 100 / (hndlrs + 1);
-    let interval = step;
-
-    for (let i = 1; i <= hndlrs; i++) {
-      res.push(interval);
-      interval += step;
-    }
-
-    return res;
-  }
-
   // effects
   useEffect(() => {
     handleTransformOptions();
   }, []);
 
-  useEffect(() => {
-    setSrcSteps(handleGenerateHandlerPositions(options[selOption]?.filter((h) => h.position === Position.Left).length));
-    setTarSteps(
-      handleGenerateHandlerPositions(options[selOption]?.filter((h) => h.position === Position.Right).length)
-    );
-  }, [selOption, options]);
-
-  useEffect(() => {
-    updateNodeInternals(parentId);
-  }, [srcSteps, tarSteps]);
-
-  console.log({ data, options, selOption });
-
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "1rem",
-      }}
-    >
-      <select
-        name={input.label.toLowerCase()}
-        id={input.label.toLowerCase()}
-        onChange={handleOnOptionSelect}
-        value={selOption}
-      >
-        {input.options.map((op, i) => (
-          <option key={op.optionName + i} value={op.optionName.toLowerCase()}>
-            {op.optionName}
-          </option>
+    <Stack gap="1rem">
+      <FormControl size="small">
+        <InputLabel>{input.label.toLowerCase()}</InputLabel>
+        <StyledSelect value={selOption} label={input.label.toLowerCase()} onChange={handleOnOptionSelect} zoom={zoom}>
+          {input.options.map((op, i) => (
+            <MenuItem key={i} value={op.optionName.toLowerCase()}>
+              {op.optionName}
+            </MenuItem>
+          ))}
+        </StyledSelect>
+      </FormControl>
+      <Handler handlers={options[selOption] ?? []} />
+      <Stack gap="0.3rem">
+        {ctas.map((c, i) => (
+          <StyledButton size="small" variant="text" key={c + i}>
+            {c}
+          </StyledButton>
         ))}
-      </select>
-      {options[selOption]
-        ?.filter((h) => h.position === Position.Left)
-        .map((h, i) => (
-          <Handle
-            key={h.name + i}
-            position={h.position}
-            type={h.type}
-            id={h.name + parentId}
-            style={{
-              top: srcSteps[i] + "%",
-            }}
-          />
-        ))}
-      {options[selOption]
-        ?.filter((h) => h.position === Position.Right)
-        .map((h, i) => (
-          <Handle
-            key={h.name + i}
-            position={h.position}
-            type={h.type}
-            id={h.name + parentId}
-            style={{
-              top: tarSteps[i] + "%",
-            }}
-          />
-        ))}
-      {ctas.map((c, i) => (
-        <button key={c + i}>{c}</button>
-      ))}
-    </div>
+      </Stack>
+    </Stack>
   );
 };

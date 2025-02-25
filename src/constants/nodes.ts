@@ -1,6 +1,6 @@
 import { HandleProps, Node, Position } from "reactflow";
 
-export type CustomNodeTypes = "input" | "output" | "llm" | "text";
+export type CustomNodeTypes = "input" | "output" | "llm" | "text" | "input2" | "output2" | "llm2" | "text2" | "loop";
 
 export type NodeHandler = {
   type: HandleProps["type"];
@@ -147,7 +147,7 @@ export const NODE_DATA: Record<CustomNodeTypes, NodeData> = {
   },
   text: {
     type: "text",
-    name: "Text Node",
+    name: "Text",
     inputs: [
       {
         type: "variable",
@@ -158,30 +158,134 @@ export const NODE_DATA: Record<CustomNodeTypes, NodeData> = {
       },
     ],
   },
-};
-
-/**
- * {
-        type: "simple",
+  input2: {
+    type: "input2",
+    name: "Input 2",
+    inputs: [
+      {
+        type: "actionable",
+        ctas: [],
         value: "",
         input: {
-          label: "",
+          label: "input 2",
+          options: [
+            {
+              optionName: "option1",
+              handlers: [],
+            },
+            {
+              optionName: "option2",
+              handlers: [],
+            },
+            {
+              optionName: "option3",
+              handlers: [],
+            },
+            {
+              optionName: "option4",
+              handlers: [],
+            },
+          ],
+        },
+      },
+      {
+        type: "linked",
+        value: "",
+        upperInput: {
+          type: "text",
+          label: "Name",
+        },
+        lowerInput: {
+          label: "Type",
+          options: ["text", "file", "number"],
+        },
+        handlers: [
+          {
+            name: "h1",
+            position: Position.Right,
+            type: "source",
+          },
+        ],
+      },
+    ],
+  },
+  output2: {
+    type: "output2",
+    name: "Output 2",
+    inputs: [
+      {
+        type: "actionable",
+        ctas: [],
+        value: "",
+        input: {
+          label: "output 2",
+          options: [
+            {
+              optionName: "option1",
+              handlers: [],
+            },
+            {
+              optionName: "option2",
+              handlers: [],
+            },
+            {
+              optionName: "option3",
+              handlers: [],
+            },
+            {
+              optionName: "option4",
+              handlers: [],
+            },
+          ],
+        },
+      },
+      {
+        type: "linked",
+        value: "",
+        upperInput: {
+          type: "text",
+          label: "Name",
+        },
+        lowerInput: {
+          label: "Type",
+          options: ["text", "file", "number"],
+        },
+        handlers: [
+          {
+            name: "h2",
+            position: Position.Left,
+            type: "target",
+          },
+        ],
+      },
+    ],
+  },
+  llm2: {
+    type: "llm2",
+    name: "LLM2",
+    inputs: [
+      {
+        type: "actionable",
+        value: "",
+        ctas: ["Edit Selected", "Create New"],
+        input: {
+          label: "llm2",
           options: [
             {
               optionName: "email",
               handlers: [
                 {
-                  name: "subject",
+                  name: "h1",
                   position: Position.Left,
                   type: "target",
                 },
                 {
-                  name: "Recepient",
+                  name: "h2",
                   position: Position.Left,
                   type: "target",
                 },
                 {
-                  name: "body",
+                  name: "h3",
                   position: Position.Left,
                   type: "target",
                 },
@@ -191,12 +295,12 @@ export const NODE_DATA: Record<CustomNodeTypes, NodeData> = {
               optionName: "slack",
               handlers: [
                 {
-                  name: "Recepients",
+                  name: "h1",
                   position: Position.Left,
                   type: "target",
                 },
                 {
-                  name: "Message",
+                  name: "h2",
                   position: Position.Left,
                   type: "target",
                 },
@@ -205,4 +309,88 @@ export const NODE_DATA: Record<CustomNodeTypes, NodeData> = {
           ],
         },
       },
- */
+    ],
+  },
+  text2: {
+    type: "text2",
+    name: "Text 2",
+    inputs: [
+      {
+        type: "simple",
+        value: "",
+        handlers: [],
+        input: {
+          label: "text 2",
+        },
+      },
+      {
+        type: "variable",
+        value: "",
+        input: {
+          label: "text node",
+        },
+      },
+      {
+        type: "actionable",
+        ctas: ["Edit something", "Create something new"],
+        value: "",
+        input: {
+          label: "input 2",
+          options: [
+            {
+              optionName: "option1",
+              handlers: [],
+            },
+            {
+              optionName: "option2",
+              handlers: [],
+            },
+            {
+              optionName: "option3",
+              handlers: [],
+            },
+            {
+              optionName: "option4",
+              handlers: [],
+            },
+          ],
+        },
+      },
+    ],
+  },
+  loop: {
+    type: "loop",
+    name: "Loop Node",
+    inputs: [
+      {
+        type: "simple",
+        value: "",
+        handlers: [
+          {
+            name: "h1",
+            type: "source",
+            position: Position.Right,
+          },
+          {
+            name: "h2",
+            type: "target",
+            position: Position.Right,
+          },
+          {
+            name: "h3",
+            type: "source",
+            position: Position.Left,
+          },
+          {
+            name: "h4",
+            type: "target",
+            position: Position.Left,
+          },
+        ],
+        input: {
+          label: "loop node",
+        },
+      },
+    ],
+  },
+};

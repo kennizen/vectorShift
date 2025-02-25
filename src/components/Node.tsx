@@ -1,4 +1,4 @@
-import { NodeProps } from "reactflow";
+import { NodeProps, useStore } from "reactflow";
 import { LinkedInput } from "./inputs/LinkedInput";
 import { VariableInput } from "./inputs/VariableInput";
 import { ActionableInput } from "./inputs/ActionableInput";
@@ -7,30 +7,32 @@ import { NodeCtx } from "./providers/NodeProvider";
 import { NodeData } from "../constants/nodes";
 import { TextInput } from "./inputs/TextInput";
 import { Stack } from "@mui/material";
+import { useCallback } from "react";
 
 export const Node = (props: NodeProps) => {
   // consts
-  const { data, id, selected, dragging } = props;
+  const { data, id, selected } = props;
   const nodeData = data as NodeData;
 
-  console.log({ data, id, selected, dragging });
+  // hooks
+  const z = useStore((state) => state.transform[2]);
 
-  function handleGetInputs() {
+  const handleGetInputs = useCallback(() => {
     const inputs = nodeData.inputs;
 
     return inputs.map((data, i) => {
       switch (data.type) {
         case "linked":
-          return <LinkedInput parentId={id} key={i} data={{ ...data }} />;
+          return <LinkedInput key={i} data={{ ...data }} />;
         case "actionable":
-          return <ActionableInput parentId={id} key={i} data={{ ...data }} />;
+          return <ActionableInput key={i} data={{ ...data }} />;
         case "variable":
-          return <VariableInput parentId={id} key={i} data={{ ...data }} />;
+          return <VariableInput key={i} data={{ ...data }} />;
         case "simple":
-          return <TextInput parentId={id} key={i} data={{ ...data }} />;
+          return <TextInput key={i} data={{ ...data }} />;
       }
     });
-  }
+  }, [nodeData.inputs.length]);
 
   return (
     <Stack
@@ -41,14 +43,14 @@ export const Node = (props: NodeProps) => {
         gap: "1rem",
         border: "1px solid var(--primary-color)",
         padding: "1rem",
-        maxWidth: "15rem",
+        width: "15rem",
         boxShadow: selected
           ? "var(--primary-color) 0px 0.0625em 0.0625em, var(--primary-color) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;"
           : "none",
       }}
     >
       <div style={{ display: "flex", justifyContent: "space-between", gap: "1rem" }}>
-        <p style={{ fontWeight: 500, fontSize: 14 }}>{nodeData.name}</p>
+        <p style={{ fontWeight: 500, fontSize: 14, color: "var(--sec-color)" }}>{nodeData.name}</p>
         <button
           style={{
             backgroundColor: "transparent",
@@ -67,9 +69,12 @@ export const Node = (props: NodeProps) => {
       <NodeCtx.Provider
         value={{
           parentId: id,
+          zoom: z,
         }}
       >
-        {handleGetInputs()}
+        <Stack className="nodrag" gap="1rem">
+          {handleGetInputs()}
+        </Stack>
       </NodeCtx.Provider>
     </Stack>
   );
